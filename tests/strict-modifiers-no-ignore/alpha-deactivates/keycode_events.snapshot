@@ -1,0 +1,5 @@
+zmk: layer_changed: layer 1 state 1
+zmk: 3 created new auto_layer
+zmk: Deactivating auto_layer for 0x07 - 0x0B
+zmk: layer_changed: layer 1 state 0
+zmk: usage_page 0x07 keycode 0x0B implicit_mods 0x00 explicit_mods 0x00

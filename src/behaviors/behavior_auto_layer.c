@@ -49,6 +49,7 @@ struct behavior_auto_layer_config {
     bool ignore_alphas;
     bool ignore_numbers;
     bool ignore_modifiers;
+    bool strict_modifiers;
 };
 
 struct active_auto_layer {
@@ -174,22 +175,30 @@ static bool auto_layer_is_numeric(uint16_t usage_page, zmk_key_t usage_id) {
 
 static bool auto_layer_should_continue(const struct behavior_auto_layer_config *config,
                                        struct zmk_keycode_state_changed *ev) {
-    // Alpha keys do not deactivate the layer if ignore_numbers is set.
-    if (config->ignore_alphas && auto_layer_is_alpha(ev->usage_page, ev->keycode)) {
+    // Modifiers do not deactivate the layer if ignore_modifiers or strict_modifiers is set.
+    if ((config->ignore_modifiers || config->strict_modifiers) &&
+        is_mod(ev->usage_page, ev->keycode)) {
+        return true;
+    }
+
+    zmk_mod_flags_t explicit_mods = zmk_hid_get_explicit_mods();
+    zmk_mod_flags_t modifiers = ev->implicit_modifiers | explicit_mods;
+
+    // When strict_modifiers is set, keys pressed with explicit modifiers bypass
+    // ignore-alphas and ignore-numbers, falling through to the continue-list check.
+    bool bypass_ignore = config->strict_modifiers && explicit_mods;
+
+    // Alpha keys do not deactivate the layer if ignore_alphas is set.
+    if (config->ignore_alphas && !bypass_ignore &&
+        auto_layer_is_alpha(ev->usage_page, ev->keycode)) {
         return true;
     }
 
     // Number keys do not deactivate the layer if ignore_numbers is set.
-    if (config->ignore_numbers && auto_layer_is_numeric(ev->usage_page, ev->keycode)) {
+    if (config->ignore_numbers && !bypass_ignore &&
+        auto_layer_is_numeric(ev->usage_page, ev->keycode)) {
         return true;
     }
-
-    // Modifiers do not deactivate the layer if ignore_modifiers is set.
-    if (config->ignore_modifiers && is_mod(ev->usage_page, ev->keycode)) {
-        return true;
-    }
-
-    zmk_mod_flags_t modifiers = ev->implicit_modifiers | zmk_hid_get_explicit_mods();
 
     return key_list_contains(config->continue_keys, ev->usage_page, ev->keycode, modifiers);
 }
@@ -243,6 +252,7 @@ static int behavior_auto_layer_init(const struct device *dev) {
         .ignore_alphas = DT_INST_PROP(n, ignore_alphas),                                           \
         .ignore_numbers = DT_INST_PROP(n, ignore_numbers),                                         \
         .ignore_modifiers = DT_INST_PROP(n, ignore_modifiers),                                     \
+        .strict_modifiers = DT_INST_PROP(n, strict_modifiers),                                     \
     };                                                                                             \
     BEHAVIOR_DT_INST_DEFINE(n, behavior_auto_layer_init, NULL, NULL,                               \
                             &behavior_auto_layer_config_##n, POST_KERNEL,                          \

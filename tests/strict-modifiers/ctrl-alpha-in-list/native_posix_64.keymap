@@ -1,0 +1,16 @@
+#include "../behavior_keymap.dtsi"
+
+// Test: Ctrl+B continues the layer because LC(B) is in the continue-list.
+// Sequence: activate strict_al, hold LCTRL (modifier, continues via implicit
+// ignore-modifiers), press B (alpha + explicit mod, bypass ignore-alphas,
+// LC(B) found in continue-list, continues).
+&kscan {
+    events = <
+        ZMK_MOCK_PRESS(1,1,10)
+        ZMK_MOCK_RELEASE(1,1,10)
+        ZMK_MOCK_PRESS(1,0,10)
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_RELEASE(1,0,10)
+    >;
+};

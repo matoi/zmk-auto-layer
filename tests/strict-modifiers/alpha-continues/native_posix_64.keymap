@@ -1,0 +1,14 @@
+#include "../behavior_keymap.dtsi"
+
+// Test: plain alpha keys continue the layer via ignore-alphas.
+// Sequence: activate strict_al, press H (alpha, continues), press B (alpha, continues).
+&kscan {
+    events = <
+        ZMK_MOCK_PRESS(1,1,10)
+        ZMK_MOCK_RELEASE(1,1,10)
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_RELEASE(0,1,10)
+    >;
+};

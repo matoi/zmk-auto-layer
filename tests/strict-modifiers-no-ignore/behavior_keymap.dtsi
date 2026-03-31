@@ -1,0 +1,31 @@
+#include <dt-bindings/zmk/keys.h>
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/kscan_mock.h>
+
+/ {
+    behaviors {
+        strict_al: strict_al {
+            compatible = "zmk,behavior-auto-layer";
+            #binding-cells = <1>;
+            continue-list = <BSPC LC(B)>;
+            strict-modifiers;
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+        default_layer {
+            bindings = <
+                &kp A     &kp B
+                &kp LCTRL &strict_al 1
+            >;
+        };
+
+        auto_layer {
+            bindings = <
+                &kp H   &kp B
+                &trans   &trans
+            >;
+        };
+    };
+};

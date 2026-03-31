@@ -1,0 +1,16 @@
+#include "../behavior_keymap.dtsi"
+
+// Test: Ctrl+H deactivates the layer because LC(H) is NOT in the continue-list.
+// Sequence: activate strict_al, hold LCTRL (modifier, continues via implicit
+// ignore-modifiers), press H (alpha + explicit mod, bypass ignore-alphas,
+// LC(H) not in continue-list, deactivates).
+&kscan {
+    events = <
+        ZMK_MOCK_PRESS(1,1,10)
+        ZMK_MOCK_RELEASE(1,1,10)
+        ZMK_MOCK_PRESS(1,0,10)
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_RELEASE(1,0,10)
+    >;
+};

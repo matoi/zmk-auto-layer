@@ -24,3 +24,11 @@ properties:
   ignore-modifiers:
     type: boolean
     description: Continue auto layer behavior for all modifiers.
+  strict-modifiers:
+    type: boolean
+    description: |
+      Implicitly enables ignore-modifiers, and ensures that modifier+key
+      combos bypass ignore-alphas and ignore-numbers and are checked against
+      the continue-list instead. This allows modifier+key combos like Ctrl+H
+      to be selectively continued while other combos like Ctrl+Z deactivate
+      the layer.

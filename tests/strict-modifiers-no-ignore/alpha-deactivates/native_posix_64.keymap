@@ -1,0 +1,12 @@
+#include "../behavior_keymap.dtsi"
+
+// Test: without ignore-alphas, plain alpha deactivates the layer.
+// Sequence: activate strict_al, press H (alpha, not in continue-list, deactivates).
+&kscan {
+    events = <
+        ZMK_MOCK_PRESS(1,1,10)
+        ZMK_MOCK_RELEASE(1,1,10)
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+    >;
+};

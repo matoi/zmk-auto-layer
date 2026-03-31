@@ -38,6 +38,15 @@ There are four configuration properties for the behavior:
 - **`ignore-alphas`** (optional): If set, the layer will not be deactivated by any alphabetic key.
 - **`ignore-numbers`** (optional): If set, the layer will not be deactivated by any numeric key.
 - **`ignore-modifiers`** (optional): If set, the layer will not be deactivated by any modifier key.
+- **`strict-modifiers`** (optional): Implicitly enables `ignore-modifiers` (standalone modifier
+  presses will not deactivate the layer) and ensures that modifier+key combos are always checked
+  against the `continue-list` — bypassing `ignore-alphas` and `ignore-numbers` when explicit
+  modifiers are held. This can be used with or without `ignore-alphas`/`ignore-numbers`:
+  - **With `ignore-alphas`**: Pressing `H` alone continues the layer (via `ignore-alphas`), but
+    `Ctrl+H` only continues if `LC(H)` or `RC(H)` is in the `continue-list`.
+  - **Without `ignore-alphas`**: Pressing `H` alone is checked against the `continue-list` as
+    usual, while `Ctrl+H` is also checked against the `continue-list`. Standalone modifier presses
+    (e.g. pressing `Ctrl` before a key) do not deactivate the layer.
 
 Behavior instances take one mandatory argument that specifies the index of the layer to be
 activated.
@@ -77,6 +86,26 @@ and all modifiers.
       #binding-cells = <1>;
       continue-list = <LEFT DOWN UP RIGHT PG_DN PG_UP>;
       ignore-modifiers;
+    };
+  };
+};
+```
+
+## Example: Shift-word with strict modifiers
+
+The following example defines a `shft-word` behavior that continues on all alphabetic keys, but
+only on _specific_ modifier+key combos (e.g. Emacs-style `Ctrl+H`, `Ctrl+B`). Other combos like
+`Ctrl+Z` will deactivate the layer.
+
+```c
+/ {
+  behaviors {
+    shft_word: shft_word {
+      compatible = "zmk,behavior-auto-layer";
+      #binding-cells = <1>;
+      continue-list = <BSPC DEL LC(H) RC(H) LC(B) RC(B)>;
+      ignore-alphas;
+      strict-modifiers;
     };
   };
 };

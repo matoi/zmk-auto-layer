@@ -1,0 +1,16 @@
+#include "../behavior_keymap.dtsi"
+
+// Test: without ignore-alphas, Ctrl+B still continues because LC(B) is in the
+// continue-list. strict-modifiers implicitly enables ignore-modifiers, so the
+// standalone Ctrl press does not deactivate.
+// Sequence: activate strict_al, hold LCTRL, press B (LC(B) in list, continues).
+&kscan {
+    events = <
+        ZMK_MOCK_PRESS(1,1,10)
+        ZMK_MOCK_RELEASE(1,1,10)
+        ZMK_MOCK_PRESS(1,0,10)
+        ZMK_MOCK_PRESS(0,1,10)
+        ZMK_MOCK_RELEASE(0,1,10)
+        ZMK_MOCK_RELEASE(1,0,10)
+    >;
+};
