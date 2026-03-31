@@ -38,7 +38,7 @@ There are four configuration properties for the behavior:
 - **`ignore-alphas`** (optional): If set, the layer will not be deactivated by any alphabetic key.
 - **`ignore-numbers`** (optional): If set, the layer will not be deactivated by any numeric key.
 - **`ignore-modifiers`** (optional): If set, the layer will not be deactivated by any modifier key.
-- **`strict-modifiers`** (optional): Implicitly enables `ignore-modifiers` (standalone modifier
+- **`strict-modifiers`** (optional, requires ZMK v0.3): Implicitly enables `ignore-modifiers` (standalone modifier
   presses will not deactivate the layer) and ensures that modifier+key combos are always checked
   against the `continue-list` — bypassing `ignore-alphas` and `ignore-numbers` when explicit
   modifiers are held. This can be used with or without `ignore-alphas`/`ignore-numbers`:
