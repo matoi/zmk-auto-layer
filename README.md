@@ -93,9 +93,9 @@ and all modifiers.
 
 ## Example: Shift-word with strict modifiers
 
-The following example defines a `shft-word` behavior that continues on all alphabetic keys, but
-only on _specific_ modifier+key combos (e.g. Emacs-style `Ctrl+H`, `Ctrl+B`). Other combos like
-`Ctrl+Z` will deactivate the layer.
+The following example defines a `shft-word` behavior that continues on all alphabetic keys and
+shift keys, but only on _specific_ modifier+key combos (e.g. Emacs-style `Ctrl+H`, `Ctrl+B`).
+Other combos like `Ctrl+Z` will deactivate the layer.
 
 ```c
 / {
@@ -103,9 +103,25 @@ only on _specific_ modifier+key combos (e.g. Emacs-style `Ctrl+H`, `Ctrl+B`). Ot
     shft_word: shft_word {
       compatible = "zmk,behavior-auto-layer";
       #binding-cells = <1>;
-      continue-list = <BSPC DEL LC(H) RC(H) LC(B) RC(B)>;
+      continue-list = <BSPC DEL LC(H) RC(H) LC(B) RC(B) LSHFT RSHFT>;
       ignore-alphas;
       strict-modifiers;
+    };
+  };
+
+  keymap {
+    compatible = "zmk,keymap";
+    default_layer {
+      bindings = <
+        // ...
+        &shft_word SHFT  // double-tap or however you prefer to activate
+        // ...
+      >;
+    };
+    shift_layer {
+      bindings = <
+        &kp LS(A) &kp LS(B) &kp LS(C) /* ... */
+      >;
     };
   };
 };
