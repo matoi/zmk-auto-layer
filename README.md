@@ -7,6 +7,8 @@ automatically on any other key press.
 This is a re-implementation of [PR #1451](https://github.com/zmkfirmware/zmk/pull/1451), separating
 the `auto-layer` behavior from `caps-word` and making the layer index a parameter.
 
+> **Note:** This branch targets **ZMK v0.3** and is not compatible with other versions.
+
 ## Usage
 
 To load the module, add the following entries to `remotes` and `projects` in `config/west.yml`.
@@ -16,23 +18,24 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: urob
-      url-base: https://github.com/urob
+    - name: matoi
+      url-base: https://github.com/matoi
   projects:
     - name: zmk
       remote: zmkfirmware
-      revision: v0.2 # set to desired version 
+      revision: v0.3
       import: app/west.yml
     - name: zmk-auto-layer
-      remote: urob
-      revision: v0.2 # set to same version as zmk above
+      remote: matoi
+      revision: feat/strict-modifiers
   self:
     path: config
 ```
 
 ## Configuration
 
-There are four configuration properties for the behavior:
+There are five configuration properties for the behavior (the original implementation has four;
+`strict-modifiers` is the new addition):
 
 - **`continue-list`** (required): An array of keycodes that will keep the layer active.
 - **`ignore-alphas`** (optional): If set, the layer will not be deactivated by any alphabetic key.
@@ -54,7 +57,7 @@ activated.
 ## Example: Num-word
 
 The module pre-configures a `num-word` behavior instance that activates a layer for as long as only
-numbers and a few other keys are pressed. To use it, source the definition at the top your keymap:
+numbers and a few other keys are pressed. To use it, source the definition at the top of your keymap:
 
 ```c
 #include <behaviors/num_word.dtsi>
@@ -93,9 +96,10 @@ and all modifiers.
 
 ## Example: Shift-word with strict modifiers
 
-The following example defines a `shft-word` behavior that continues on all alphabetic keys and
-shift keys, but only on _specific_ modifier+key combos (e.g. Emacs-style `Ctrl+H`, `Ctrl+B`).
-Other combos like `Ctrl+Z` will deactivate the layer.
+This example uses the newly added `strict-modifiers` property.
+The following defines a `shft-word` behavior that continues on all alphabetic keys and
+shift keys, but deactivates only on _specific_ modifier+key combos in the `continue-list` (e.g. Emacs-style
+`Ctrl+H`, `Ctrl+D`, `Ctrl+F`, `Ctrl+B`) and arrow keys. Other combos like `Ctrl+Z` will deactivate the layer.
 
 ```c
 / {
@@ -103,7 +107,7 @@ Other combos like `Ctrl+Z` will deactivate the layer.
     shft_word: shft_word {
       compatible = "zmk,behavior-auto-layer";
       #binding-cells = <1>;
-      continue-list = <BSPC DEL LC(H) RC(H) LC(B) RC(B) LSHFT RSHFT>;
+      continue-list = <BSPC DEL LC(H) RC(H) LC(D) RC(D) LC(F) RC(F) LC(B) RC(B) LEFT RIGHT LSHFT RSHFT>;
       ignore-alphas;
       strict-modifiers;
     };
@@ -114,7 +118,7 @@ Other combos like `Ctrl+Z` will deactivate the layer.
     default_layer {
       bindings = <
         // ...
-        &shft_word SHFT  // double-tap or however you prefer to activate
+        &shft_word 1 // Use layer number 1 (shift_layer)
         // ...
       >;
     };
