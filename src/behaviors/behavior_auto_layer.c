@@ -217,6 +217,12 @@ static int auto_layer_keycode_state_changed_listener(const zmk_event_t *eh) {
 
         if (!auto_layer_should_continue(auto_layer->config, ev)) {
             LOG_DBG("Deactivating auto_layer for 0x%02X - 0x%02X", ev->usage_page, ev->keycode);
+
+            // The current key event was resolved while the auto layer was still
+            // active. Drop any layer-provided implicit modifiers before the HID
+            // listener consumes the event so the first disallowed combo does
+            // not inherit stale mods from the auto layer.
+            ev->implicit_modifiers = 0;
             deactivate_auto_layer(auto_layer);
         }
     }

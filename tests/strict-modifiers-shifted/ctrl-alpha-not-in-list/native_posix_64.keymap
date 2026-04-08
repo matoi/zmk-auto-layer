@@ -1,0 +1,17 @@
+#include "../behavior_keymap.dtsi"
+
+// Test: Ctrl+H deactivates the layer and does not leak the layer's implicit
+// shift into the first disallowed combo.
+// Sequence: activate strict_al, hold LCTRL, press H on the auto layer (bound
+// as LS(H)); strict-modifiers bypasses ignore-alphas, LC(H) is not in the
+// continue-list, so the layer deactivates and the HID event keeps only LCTRL.
+&kscan {
+    events = <
+        ZMK_MOCK_PRESS(1,1,10)
+        ZMK_MOCK_RELEASE(1,1,10)
+        ZMK_MOCK_PRESS(1,0,10)
+        ZMK_MOCK_PRESS(0,0,10)
+        ZMK_MOCK_RELEASE(0,0,10)
+        ZMK_MOCK_RELEASE(1,0,10)
+    >;
+};
